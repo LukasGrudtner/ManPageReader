@@ -48,10 +48,20 @@ int biggerFile(int argc, char* argv[])
 
 bool selectWord(std::string word)
 {
+    // char alfabeto[26] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"}
     int i = 0, j = 0;
     while (word[i] != '\0') {
-        if (word[i] == ':' || word[i] == '<' || word[i] == '>' || word[i] == '_' || word[i] == '=' || word[i] == '[' || word[i] == '(' || word[i] == '-' || word[i] == '.' || word[i] == '/')
-            return false;
+        // if (word[i] == '0' ||word[i] == '&' ||word[i] == '*' ||word[i] == '%' ||word[i] == ':' || word[i] == '<' || word[i] == '>' || word[i] == '_' || word[i] == '=' || word[i] == '[' || word[i] == '(' || word[i] == '-' || word[i] == '.' || word[i] == '/')
+        //     return false;
+        // if (word[i] != "a" && word[i] != "b" && word[i] != "c" && word[i] != "d" && word[i] != "e" && word[i] != "f" && word[i] != "g" && word[i] != "h" && word[i] != "i" && word[i] != "j" && word[i] != "k" && word[i] != "l" && word[i] != "m" && word[i] != "n" && word[i] != "p" && word[i] != "p" && word[i] != "q" && word[i] != "r" && word[i] != "s" && word[i] != "t" && word[i] != "u" && word[i] != "v" && word[i] != "x" && word[i] != "y")
+        for (int j = 33; j <= 64; ++j) {
+            if (word[i] == j)
+                return false;
+        }
+        for (int k = 91; k <= 96; ++k) {
+            if (word[i] == k)
+                return false;
+        }
         ++i;
     }
     if (word == "in" || word == "on" || word == "at")
@@ -75,6 +85,7 @@ void findSecondaryKeys(int argc, char *argv[])
     std::ifstream file;
     std::ofstream output;
     std::string word;
+    int counter = 0;
 
     output.open("output.dat");
 
@@ -84,15 +95,14 @@ void findSecondaryKeys(int argc, char *argv[])
             file >> word;
             if (selectWord(word)) {
                 output << word << std::endl;
-                std::cout << word << endl;
-                //output.write(word, sizeof(word));
-            /* Fazer alguma coisa com as palavras, provavelmente escrevê-las
-            em um arquivo, para o programa principal poder lê-las. */
+                 //std::cout << word << endl;
+                counter++;
         }
         }
+        file.close();
     }
-    file.close();
     output.close();
+    cout << "\n\nCounter: " << counter << endl;
 }
 
 
