@@ -48,12 +48,8 @@ int biggerFile(int argc, char* argv[])
 
 bool selectWord(std::string word)
 {
-    // char alfabeto[26] = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t"}
-    int i = 0, j = 0;
+    int i = 0;
     while (word[i] != '\0') {
-        // if (word[i] == '0' ||word[i] == '&' ||word[i] == '*' ||word[i] == '%' ||word[i] == ':' || word[i] == '<' || word[i] == '>' || word[i] == '_' || word[i] == '=' || word[i] == '[' || word[i] == '(' || word[i] == '-' || word[i] == '.' || word[i] == '/')
-        //     return false;
-        // if (word[i] != "a" && word[i] != "b" && word[i] != "c" && word[i] != "d" && word[i] != "e" && word[i] != "f" && word[i] != "g" && word[i] != "h" && word[i] != "i" && word[i] != "j" && word[i] != "k" && word[i] != "l" && word[i] != "m" && word[i] != "n" && word[i] != "p" && word[i] != "p" && word[i] != "q" && word[i] != "r" && word[i] != "s" && word[i] != "t" && word[i] != "u" && word[i] != "v" && word[i] != "x" && word[i] != "y")
         for (int j = 33; j <= 64; ++j) {
             if (word[i] == j)
                 return false;
@@ -95,7 +91,6 @@ void findSecondaryKeys(int argc, char *argv[])
             file >> word;
             if (selectWord(word)) {
                 output << word << std::endl;
-                 //std::cout << word << endl;
                 counter++;
         }
         }
@@ -105,13 +100,78 @@ void findSecondaryKeys(int argc, char *argv[])
     cout << "\n\nCounter: " << counter << endl;
 }
 
+/* Método para deletar as palavras repetidas no arquivo.
+    Aparentemente não funciona... */
+// void deleteRepeatedWords(int argc, char *argv[])
+// {
+//     std::string pivo, word = "";
+//     int posicao;
+//     std::ifstream input1, input2;
+//     ofstream output;
+//
+//     input1.open("output.dat");
+//     input2.open("output.dat");
+//
+//     while (!input1.eof()) {
+//         input1 >> pivo;
+//         cout << "Pivô: " << pivo << endl;
+//         while (!input2.eof()) {
+//             //cout << "Word: " << word << endl;
+//             input2 >> word;
+//             if (pivo == word) {
+//                 posicao = input2.tellg();
+//                 //cout << posicao << endl;
+//                 input1.seekg(posicao);
+//                 input1 >> word;
+//                 getline(input1, word);
+//                 //cout << word << endl;
+//             }
+//         }
+//         input2.close();
+//         input2.open("output.dat");
+//     }
+//     input1.close();
+//     input2.close();
+// }
 
+void createRegisters(int argc, char *argv[])
+{
+    int nameSize = biggerName(argc, argv);
+    int contentsSize = biggerFile(argc, argv);
+    cout << "NameSize: " << nameSize << "\n";
+    cout << "ContentsSize: " << contentsSize << "\n";
 
+    struct manpages {
+        char name[17];          /* Valores para apenas 2 manpages */
+        char contents[4700];
+    };
 
+    struct manpages registro;
+
+    ifstream file;
+    string nome;
+    for (int i = 1; i < 2; i++) {
+        file.open(argv[i]);
+
+        int k = 0;
+        while (argv[i][k] != '\0') {
+            registro.name[k] = argv[i][k];
+            k++;
+        }
+        cout << "Registro.nome: " << registro.name << "\n";
+
+        file.read((char *) &registro.contents, sizeof(struct manpages));
+
+        cout << "\n\n" << registro.contents << "\n";
+        file.close();
+    }
+
+}
 
 int main (int argc, char* argv[])
 {
     biggerName(argc, argv);
     std::cout << "Bigger File: " << biggerFile(argc, argv) << " bytes.\n";
     findSecondaryKeys(argc, argv);
+    createRegisters(argc, argv);
 }
