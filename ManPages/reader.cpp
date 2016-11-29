@@ -137,10 +137,9 @@ void createRegisters(int argc, char *argv[])
     cout << "Bigger Name: " << nameSize << " bytes.\n";
     cout << "Bigger File: " << contentsSize << " bytes.\n\n";
 
-    /* Alocar memória com malloc e depois desalocar para limpar a struct */
     struct manpages {
-        char name[52];          /* Valores para apenas 2 manpages */
-        char contents[139715];
+        char name[17];          /* Valores para apenas 2 manpages */
+        char contents[4700];
     };
 
     struct manpages registro;
@@ -150,7 +149,6 @@ void createRegisters(int argc, char *argv[])
     manpage.open("manpage.dat");
 
     for (int i = 1; i < argc; i++) {
-        struct manpages registro;
         file.open(argv[i]);
 
         int k = 0;
@@ -158,59 +156,19 @@ void createRegisters(int argc, char *argv[])
             registro.name[k] = argv[i][k];
             k++;
         }
-        // cout << "Registro.nome: " << registro.name << "\n";
+        cout << "Registro.nome: " << registro.name << "\n";
 
         file.read((char *) &registro.contents, sizeof(struct manpages));
 
         file.close();
         manpage.write((char *) &registro, sizeof(struct manpages));
-
-        /* Gambiarra pura. Deve ter um jeito melhor pra resolver isso. */
-        int m = 0;
-        while (registro.name[m] != '\0') {
-            registro.name[m] = '\0';
-            m++;
-        }
-
-        int n = 0;
-        while (registro.contents[n] != '\0') {
-            registro.contents[n] = '\0';
-            n++;
-        }
-
     }
     manpage.close();
 
 }
 
-void ler(int argc, char *argv[])
-{
-    struct manpages {
-        char name[52];          /* Valores para apenas 2 manpages */
-        char contents[139715];
-    };
-    struct manpages registro;
-    ifstream file;
-    file.open("manpage.dat");
-
-    file.read((char *) &registro, sizeof(struct manpages));
-    cout << "Name: " << registro.name << endl;
-    cout << registro.contents << endl;
-
-    file.seekg(139767);
-
-    file.read((char *) &registro, sizeof(struct manpages));
-    cout <<  "Name: " << registro.name << endl;
-    cout << registro.contents << endl;
-
-    file.close();
-}
-
 int main (int argc, char* argv[])
 {
-    cout << "Bigger File: " << biggerFile(argc, argv);
-    cout << "Bigger Name: " << biggerName(argc, argv);
     findSecondaryKeys(argc, argv);
     createRegisters(argc, argv);
-    ler(argc, argv);
 }
