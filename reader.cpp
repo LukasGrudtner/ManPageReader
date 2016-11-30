@@ -44,6 +44,9 @@ int biggerFile(int argc, char* argv[])
 
 bool selectWord(std::string word)
 {
+    if(word[1] == '\0')
+        return false;
+
     int i = 0;
     while (word[i] != '\0') {
         for (int j = 33; j <= 64; ++j) {
@@ -79,7 +82,7 @@ void findSecondaryKeys(int argc, char *argv[])
     std::string word;
     int counter = 0;
 
-    output.open("output.dat");
+    output.open("secondaryKeys.dat");
 
     for (int i = 1; i < argc; ++i) {
         file.open(argv[i]);
@@ -193,15 +196,24 @@ void ler(int argc, char *argv[])
     ifstream file;
     file.open("manpage.dat");
 
-    file.read((char *) &registro, sizeof(struct manpages));
-    cout << "Name: " << registro.name << endl;
-    cout << registro.contents << endl;
-
-    file.seekg(139767);
+    file.seekg(139767*0);
 
     file.read((char *) &registro, sizeof(struct manpages));
-    cout <<  "Name: " << registro.name << endl;
-    cout << registro.contents << endl;
+    // cout <<  "Contents: " << registro.contents << endl;
+
+    int posicao, counter;
+    string teste = registro.contents;
+
+    while (posicao > -1) {
+        posicao = teste.find("file");
+        cout << posicao << endl;
+        if (posicao > -1) {
+            teste[posicao] = 'c';
+            counter++;
+        }
+    }
+
+    cout << "Counter: " << counter << endl;
 
     file.close();
 }
@@ -212,5 +224,5 @@ int main (int argc, char* argv[])
     cout << "Bigger Name: " << biggerName(argc, argv);
     findSecondaryKeys(argc, argv);
     createRegisters(argc, argv);
-    ler(argc, argv);
+    //ler(argc, argv);
 }
