@@ -9,7 +9,8 @@
 #include "linked_list.h"
 
 using namespace std;
-// Procura a palavra com maior número de caracteres
+
+/* Retorna o Comando com o maior nome */
 int biggerName(int argc, char* argv[])
 {
     unsigned long bigger_name = 0;
@@ -20,6 +21,7 @@ int biggerName(int argc, char* argv[])
     return bigger_name;
 }
 
+/* Retorna a ManPage com o maior conteúdo */
 int biggerFile(int argc, char* argv[])
 {
     unsigned long biggerFile = 0, counter = 0;
@@ -44,6 +46,7 @@ int biggerFile(int argc, char* argv[])
 
 }
 
+/* Faz a filtragem das palavras, retirando as que caem em categorias léxicas */
 bool selectWord(std::string word)
 {
     if(word[1] == '\0')
@@ -65,9 +68,14 @@ bool selectWord(std::string word)
     }
 
     string preposicoes[] = {"in", "on", "at", "of"};
-    string conjuncoes[] = {"and", "but", "or", "so", "althoug", "because", "for", "if", "since", "either", "neither"};
-    string pronomes[] = {"I", "you", "he", "she", "it", "we", "you", "they", "me", "him", "her", "us", "them", "my", "your", "his", "her", "its", "out", "their", "mine", "hers", "ours", "yours",
-                        "theirs", "somebody", "someone", "something", "nobody", "nothing", "nowhere", "who", "which", "that", "this", "these", "that", "those"};
+    string conjuncoes[] = {"and", "but", "or", "so", "althoug", "because",
+                            "for", "if", "since", "either", "neither"};
+    string pronomes[] = {"I", "you", "he", "she", "it", "we", "you", "they",
+                        "me", "him", "her", "us", "them", "my", "your", "his",
+                        "her", "its", "out", "their", "mine", "hers", "ours",
+                        "yours", "theirs", "somebody", "someone", "something",
+                        "nobody", "nothing", "nowhere", "who", "which", "that",
+                        "this", "these", "that", "those"};
     string artigos[] = {"the", "an", "a"};
 
 
@@ -94,6 +102,7 @@ bool selectWord(std::string word)
     return true;
 }
 
+/* Encontra as chaves secundárias e as escreve em arquivo */
 void findSecondaryKeys(int argc, char *argv[])
 {
     std::ifstream file;
@@ -117,6 +126,7 @@ void findSecondaryKeys(int argc, char *argv[])
     output.close();
 }
 
+/* Cria os registros das ManPages */
 void createRegisters(int argc, char *argv[])
 {
     int nameSize = biggerName(argc, argv);
@@ -169,6 +179,7 @@ void createRegisters(int argc, char *argv[])
 
 }
 
+/* Exemplo de como ler um arquivo para uma struct, não é utilizado */
 void ler(int argc, char *argv[])
 {
     struct manpages {
@@ -216,6 +227,7 @@ unsigned long numWords(string destino)
     return counter;
 }
 
+/* Lê o arquivo bruto e escreve um arquivo retirando as palavras repetidas */
 void removeRepeatedWords(int argc, char *argv[]) {
     fstream input, output;
     LinkedList* lista = new LinkedList();
@@ -238,7 +250,6 @@ void removeRepeatedWords(int argc, char *argv[]) {
 
     int size = lista->size();
     for (int i = 0; i < size; i++) {
-        // cout << i << "\n";
         cout << "File: " << lista->size() << endl;
         output << lista->pop_front() << endl;
     }
@@ -252,10 +263,8 @@ void removeRepeatedWords(int argc, char *argv[]) {
 
 int main (int argc, char* argv[])
 {
-    // cout << "Bigger File: " << biggerFile(argc, argv);
-    // cout << "Bigger Name: " << biggerName(argc, argv);
     findSecondaryKeys(argc, argv);
     createRegisters(argc, argv);
-    //ler(argc, argv);
+
     removeRepeatedWords(argc, argv);
 }
