@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <stdlib.h>
 #include <list>
-#include <vector>
 #include "linked_list.h"
 
 using namespace std;
@@ -49,6 +48,8 @@ bool selectWord(std::string word)
 {
     if(word[1] == '\0')
         return false;
+    if(word[0] == '{' || word[0] == '}')
+        return false;
 
     int i = 0;
     while (word[i] != '\0') {
@@ -62,18 +63,33 @@ bool selectWord(std::string word)
         }
         ++i;
     }
-    if (word == "in" || word == "on" || word == "at")
-        return false;
-    if (word == "and" || word == "but" || word == "or" || word == "so" || word == "althoug" || word == "because" || word == "for" || word == "if" || word == "since" || word == "either" || word == "neither")
-        return false;
-    if (word == "I" || word == "you" || word == "he" || word == "she" || word == "it" || word == "we" || word == "you" || word == "they" || word == "me" || word == "you" || word == "him" || word == "her" || word == "it" || word == "us" || word == "them"|| word == "my" || word == "your" || word == "his" || word == "her" || word == "its" || word == "our" || word == "their"
-        || word == "mine" || word == "yours" || word == "his" || word == "hers" || word == "its" || word == "ours" || word == "yours" || word == "theirs")
-        return false;
-    if (word == "the" || word == "The" || word == "an" || word == "a")
-        return false;
 
-    if (word == "the" || word == "of")
-        return false;
+    string preposicoes[] = {"in", "on", "at", "of"};
+    string conjuncoes[] = {"and", "but", "or", "so", "althoug", "because", "for", "if", "since", "either", "neither"};
+    string pronomes[] = {"I", "you", "he", "she", "it", "we", "you", "they", "me", "him", "her", "us", "them", "my", "your", "his", "her", "its", "out", "their", "mine", "hers", "ours", "yours",
+                        "theirs", "somebody", "someone", "something", "nobody", "nothing", "nowhere", "who", "which", "that", "this", "these", "that", "those"};
+    string artigos[] = {"the", "an", "a"};
+
+
+    for (int i = 0; i < (sizeof(preposicoes)/sizeof(string)); i++) {
+        if (word == preposicoes[i])
+            return false;
+    }
+
+    for (int i = 0; i < (sizeof(conjuncoes)/sizeof(string)); i++) {
+        if (word == conjuncoes[i])
+            return false;
+    }
+
+    for (int i = 0; i < (sizeof(pronomes)/sizeof(string)); i++) {
+        if (word == pronomes[i])
+            return false;
+    }
+
+    for (int i = 0; i < (sizeof(artigos)/sizeof(string)); i++) {
+        if (word == artigos[i])
+            return false;
+    }
 
     return true;
 }
@@ -85,7 +101,7 @@ void findSecondaryKeys(int argc, char *argv[])
     std::string word;
     int counter = 0;
 
-    output.open("secondaryKeys.dat");
+    output.open("words.dat");
 
     for (int i = 1; i < argc; ++i) {
         file.open(argv[i]);
@@ -101,40 +117,6 @@ void findSecondaryKeys(int argc, char *argv[])
     output.close();
 }
 
-/* Método para deletar as palavras repetidas no arquivo.
-    Aparentemente não funciona... */
-// void deleteRepeatedWords(int argc, char *argv[])
-// {
-//     std::string pivo, word = "";
-//     int posicao;
-//     std::ifstream input1, input2;
-//     ofstream output;
-//
-//     input1.open("output.dat");
-//     input2.open("output.dat");
-//
-//     while (!input1.eof()) {
-//         input1 >> pivo;
-//         cout << "Pivô: " << pivo << endl;
-//         while (!input2.eof()) {
-//             //cout << "Word: " << word << endl;
-//             input2 >> word;
-//             if (pivo == word) {
-//                 posicao = input2.tellg();
-//                 //cout << posicao << endl;
-//                 input1.seekg(posicao);
-//                 input1 >> word;
-//                 getline(input1, word);
-//                 //cout << word << endl;
-//             }
-//         }
-//         input2.close();
-//         input2.open("output.dat");
-//     }
-//     input1.close();
-//     input2.close();
-// }
-
 void createRegisters(int argc, char *argv[])
 {
     int nameSize = biggerName(argc, argv);
@@ -143,9 +125,8 @@ void createRegisters(int argc, char *argv[])
     cout << "Bigger Name: " << nameSize << " bytes.\n";
     cout << "Bigger File: " << contentsSize << " bytes.\n\n";
 
-    /* Alocar memória com malloc e depois desalocar para limpar a struct */
     struct manpages {
-        char name[52];          /* Valores para apenas 2 manpages */
+        char name[52];
         char contents[139715];
     };
 
@@ -164,7 +145,6 @@ void createRegisters(int argc, char *argv[])
             registro.name[k] = argv[i][k];
             k++;
         }
-        // cout << "Registro.nome: " << registro.name << "\n";
 
         file.read((char *) &registro.contents, sizeof(struct manpages));
 
@@ -192,7 +172,7 @@ void createRegisters(int argc, char *argv[])
 void ler(int argc, char *argv[])
 {
     struct manpages {
-        char name[52];          /* Valores para apenas 2 manpages */
+        char name[52];
         char contents[139715];
     };
     struct manpages registro;
@@ -202,7 +182,6 @@ void ler(int argc, char *argv[])
     file.seekg(139767*0);
 
     file.read((char *) &registro, sizeof(struct manpages));
-    // cout <<  "Contents: " << registro.contents << endl;
 
     int posicao, counter;
     string teste = registro.contents;
@@ -222,12 +201,12 @@ void ler(int argc, char *argv[])
 }
 
 /* Lê o arquivo de Chaves Secundárias e retorna o número de chaves */
-unsigned long numWords()
+unsigned long numWords(string destino)
 {
     ifstream file;
     string word;
     unsigned long counter = 0;
-    file.open("secondaryKeys.dat");
+    file.open(destino);
 
     while (!file.eof()) {
         getline(file, word);
@@ -241,10 +220,8 @@ void removeRepeatedWords(int argc, char *argv[]) {
     fstream input, output;
     LinkedList* lista = new LinkedList();
 
-    int i = numWords();
-
-    input.open("secondaryKeys.dat");
-    output.open("secondaryKeysClean.dat");
+    input.open("words.dat");
+    output.open("secondaryKeys.dat");
     string word, word2;
     bool teste = false;
     int cont;
@@ -255,13 +232,18 @@ void removeRepeatedWords(int argc, char *argv[]) {
         if (!lista->contains(word)) {
             lista->push_back(word);
             cont++;
-            cout << "Antes: " << i << " Depois: " << cont << endl;
+            cout << "Lista: " << lista->size() << endl;
         }
     }
 
-    for (int i = 0; i < lista->size(); i++) {
+    int size = lista->size();
+    for (int i = 0; i < size; i++) {
+        // cout << i << "\n";
+        cout << "File: " << lista->size() << endl;
         output << lista->pop_front() << endl;
     }
+
+    cout << "Depois: " << numWords("secondaryKeys.dat") << endl;
 
     input.close();
     output.close();
@@ -272,9 +254,8 @@ int main (int argc, char* argv[])
 {
     // cout << "Bigger File: " << biggerFile(argc, argv);
     // cout << "Bigger Name: " << biggerName(argc, argv);
-    // findSecondaryKeys(argc, argv);
-    // createRegisters(argc, argv);
+    findSecondaryKeys(argc, argv);
+    createRegisters(argc, argv);
     //ler(argc, argv);
-    //cout << numWords() << endl;
     removeRepeatedWords(argc, argv);
 }
