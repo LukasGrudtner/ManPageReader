@@ -5,6 +5,9 @@
 #include <sstream>
 #include <iomanip>
 #include <stdlib.h>
+#include <list>
+#include <vector>
+#include "linked_list.h"
 
 using namespace std;
 // Procura a palavra com maior número de caracteres
@@ -218,11 +221,60 @@ void ler(int argc, char *argv[])
     file.close();
 }
 
+/* Lê o arquivo de Chaves Secundárias e retorna o número de chaves */
+unsigned long numWords()
+{
+    ifstream file;
+    string word;
+    unsigned long counter = 0;
+    file.open("secondaryKeys.dat");
+
+    while (!file.eof()) {
+        getline(file, word);
+        counter++;
+    }
+
+    return counter;
+}
+
+void removeRepeatedWords(int argc, char *argv[]) {
+    fstream input, output;
+    LinkedList* lista = new LinkedList();
+
+    int i = numWords();
+
+    input.open("secondaryKeys.dat");
+    output.open("secondaryKeysClean.dat");
+    string word, word2;
+    bool teste = false;
+    int cont;
+
+    while (!input.eof()) {
+        input >> word;
+
+        if (!lista->contains(word)) {
+            lista->push_back(word);
+            cont++;
+            cout << "Antes: " << i << " Depois: " << cont << endl;
+        }
+    }
+
+    for (int i = 0; i < lista->size(); i++) {
+        output << lista->pop_front() << endl;
+    }
+
+    input.close();
+    output.close();
+}
+
+
 int main (int argc, char* argv[])
 {
-    cout << "Bigger File: " << biggerFile(argc, argv);
-    cout << "Bigger Name: " << biggerName(argc, argv);
-    findSecondaryKeys(argc, argv);
-    createRegisters(argc, argv);
+    // cout << "Bigger File: " << biggerFile(argc, argv);
+    // cout << "Bigger Name: " << biggerName(argc, argv);
+    // findSecondaryKeys(argc, argv);
+    // createRegisters(argc, argv);
     //ler(argc, argv);
+    //cout << numWords() << endl;
+    removeRepeatedWords(argc, argv);
 }
